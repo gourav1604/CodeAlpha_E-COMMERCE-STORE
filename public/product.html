@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Product Details - E-Commerce Store</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <header class="navbar">
+    <div class="container nav-container">
+      <a href="index.html" class="logo">
+        <i class="fa-solid fa-bag-shopping"></i> E-COMMERCE <span>STORE</span>
+        <span class="logo-tag">Full Stack</span>
+      </a>
+
+      <nav>
+        <ul class="nav-menu">
+          <li><a href="index.html" class="nav-link"><i class="fa-solid fa-house"></i> Home</a></li>
+          <li>
+            <a href="cart.html" class="nav-link cart-icon-wrapper">
+              <i class="fa-solid fa-cart-shopping"></i> Cart
+              <span id="cart-count" class="cart-badge" style="display: none;">0</span>
+            </a>
+          </li>
+          <li id="nav-auth" class="nav-menu" style="gap: 16px;">
+            <a href="login.html" class="nav-link"><i class="fa-solid fa-user"></i> Sign In</a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Product Details Container -->
+  <main class="container">
+    <div style="margin-top: 24px;">
+      <a href="index.html" class="btn btn-outline btn-sm">
+        <i class="fa-solid fa-arrow-left"></i> Back to Products
+      </a>
+    </div>
+
+    <div id="product-container">
+      <div class="empty-state">
+        <i class="fa-solid fa-spinner fa-spin empty-state-icon"></i>
+        <p>Loading product details...</p>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <p>&copy; 2026 CodeAlpha Full Stack Internship — Task 1: Simple E-Commerce Store</p>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+  <script>
+    let currentProduct = null;
+
+    async function loadProductDetails() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const productId = urlParams.get('id');
+      const container = document.getElementById('product-container');
+
+      if (!productId) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <i class="fa-solid fa-circle-question empty-state-icon"></i>
+            <h3>No Product Selected</h3>
+            <p>Please select a product from the home page.</p>
+            <a href="index.html" class="btn btn-primary" style="margin-top: 16px;">Go to Store</a>
+          </div>
+        `;
+        return;
+      }
+
+      try {
+        const data = await apiRequest(`/products/${productId}`);
+        currentProduct = data.product;
+
+        document.title = `${currentProduct.name} - E-Commerce Store`;
+
+        container.innerHTML = `
+          <div class="product-detail-container">
+            <div class="product-detail-image-wrap">
+              <img src="${currentProduct.image_url}" alt="${currentProduct.name}" class="product-detail-image" onerror="this.src='https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=600'">
+            </div>
+            <div class="product-detail-info">
+              <span class="detail-category"><i class="fa-solid fa-tag"></i> ${currentProduct.category}</span>
+              <h1 class="detail-title">${currentProduct.name}</h1>
+              <div class="detail-price">${formatCurrency(currentProduct.price)}</div>
+              <p class="detail-description">${currentProduct.description}</p>
+              
+              <div class="detail-meta">
+                <div class="detail-meta-row">
+                  <span><strong>Availability:</strong></span>
+                  <span style="color: var(--success-color); font-weight: 600;">
+                    <i class="fa-solid fa-circle-check"></i> In Stock (${currentProduct.stock} units left)
+                  </span>
+                </div>
+                <div class="detail-meta-row">
+                  <span><strong>Shipping:</strong></span>
+                  <span>Fast Free Delivery available</span>
+                </div>
+              </div>
+
+              <div class="qty-control">
+                <label for="qty-input" style="font-weight: 600;">Quantity:</label>
+                <button type="button" class="qty-btn" onclick="changeQty(-1)">-</button>
+                <input type="number" id="qty-input" class="qty-input" value="1" min="1" max="${currentProduct.stock}" readonly>
+                <button type="button" class="qty-btn" onclick="changeQty(1)">+</button>
+              </div>
+
+              <div style="display: flex; gap: 14px;">
+                <button onclick="handleAddToCart()" class="btn btn-primary" style="flex: 1; padding: 14px;">
+                  <i class="fa-solid fa-cart-shopping"></i> Add to Cart
+                </button>
+                <a href="cart.html" onclick="handleBuyNow()" class="btn btn-secondary" style="flex: 1; padding: 14px; text-align: center;">
+                  <i class="fa-solid fa-bolt"></i> Buy Now
+                </a>
+              </div>
+            </div>
+          </div>
+        `;
+      } catch (err) {
+        console.error('Error loading product details:', err);
+        container.innerHTML = `
+          <div class="empty-state">
+            <i class="fa-solid fa-triangle-exclamation empty-state-icon" style="color: var(--danger-color);"></i>
+            <h3>Product Not Found</h3>
+            <p>${err.message}</p>
+            <a href="index.html" class="btn btn-primary" style="margin-top: 16px;">Back to Catalog</a>
+          </div>
+        `;
+      }
+    }
+
+    function changeQty(delta) {
+      const input = document.getElementById('qty-input');
+      if (!input || !currentProduct) return;
+      let currentVal = parseInt(input.value) || 1;
+      let newVal = currentVal + delta;
+      if (newVal >= 1 && newVal <= (currentProduct.stock || 99)) {
+        input.value = newVal;
+      }
+    }
+
+    function handleAddToCart() {
+      if (!currentProduct) return;
+      const qty = parseInt(document.getElementById('qty-input').value) || 1;
+      Cart.addItem(currentProduct, qty);
+    }
+
+    function handleBuyNow() {
+      if (!currentProduct) return;
+      const qty = parseInt(document.getElementById('qty-input').value) || 1;
+      Cart.addItem(currentProduct, qty);
+      window.location.href = 'cart.html';
+    }
+
+    loadProductDetails();
+  </script>
+</body>
+</html>
