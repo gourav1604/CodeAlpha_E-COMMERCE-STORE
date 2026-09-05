@@ -9,11 +9,43 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const JWT_SECRET = process.env.JWT_SECRET || 'codealpha_super_secret_key_2026';
 
+// Security Headers Middleware
+app.use((req, res, next) => {
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+  res.setHeader('X-XSS-Protection', '1; mode=block');
+  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+  next();
+});
+
 // Middleware
 app.use(cors());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ limit: '2mb' }));
+app.use(express.urlencoded({ extended: true, limit: '2mb' }));
 app.use(express.static(path.join(__dirname, 'public')));
+
+// In-Memory Rate Limiter for Authentication
+const authRateLimits = new Map();
+function rateLimitAuth(req, res, next) {
+  const ip = req.ip || req.connection.remoteAddress || 'unknown';
+  const now = Date.now();
+  const windowMs = 15 * 60 * 1000;
+  const maxAttempts = 60;
+
+  const record = authRateLimits.get(ip) || { count: 0, resetAt: now + windowMs };
+  if (now > record.resetAt) {
+    record.count = 0;
+    record.resetAt = now + windowMs;
+  }
+
+  record.count++;
+  authRateLimits.set(ip, record);
+
+  if (record.count > maxAttempts) {
+    return res.status(429).json({ error: 'Too many authentication attempts. Please try again later.' });
+  }
+  next();
+}
 
 // Authentication Middleware
 function authenticateToken(req, res, next) {
@@ -54,15 +86,27 @@ function optionalAuth(req, res, next) {
    ========================================================= */
 
 // 1. User Registration
-app.post('/api/register', (req, res) => {
+app.post('/api/register', rateLimitAuth, (req, res) => {
   const { name, email, password } = req.body;
 
   if (!name || !email || !password) {
     return res.status(400).json({ error: 'Please provide name, email, and password.' });
   }
 
+  const cleanName = String(name).trim();
+  const cleanEmail = String(email).trim().toLowerCase();
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  if (!emailRegex.test(cleanEmail)) {
+    return res.status(400).json({ error: 'Please provide a valid email address format.' });
+  }
+
+  if (String(password).length < 6) {
+    return res.status(400).json({ error: 'Password must be at least 6 characters long.' });
+  }
+
   // Check if user already exists
-  db.get('SELECT * FROM users WHERE email = ?', [email.toLowerCase()], async (err, existingUser) => {
+  db.get('SELECT * FROM users WHERE email = ?', [cleanEmail], async (err, existingUser) => {
     if (err) {
       return res.status(500).json({ error: 'Database query error.' });
     }
@@ -75,12 +119,12 @@ app.post('/api/register', (req, res) => {
       const hashedPassword = await bcrypt.hash(password, salt);
 
       const sql = 'INSERT INTO users (name, email, password) VALUES (?, ?, ?)';
-      db.run(sql, [name.trim(), email.toLowerCase().trim(), hashedPassword], function (insertErr) {
+      db.run(sql, [cleanName, cleanEmail, hashedPassword], function (insertErr) {
         if (insertErr) {
           return res.status(500).json({ error: 'Failed to create user account.' });
         }
 
-        const newUser = { id: this.lastID, name: name.trim(), email: email.toLowerCase().trim() };
+        const newUser = { id: this.lastID, name: cleanName, email: cleanEmail };
         const token = jwt.sign(newUser, JWT_SECRET, { expiresIn: '7d' });
 
         return res.status(201).json({
@@ -96,14 +140,16 @@ app.post('/api/register', (req, res) => {
 });
 
 // 2. User Login
-app.post('/api/login', (req, res) => {
+app.post('/api/login', rateLimitAuth, (req, res) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
     return res.status(400).json({ error: 'Please provide email and password.' });
   }
 
-  db.get('SELECT * FROM users WHERE email = ?', [email.toLowerCase().trim()], async (err, user) => {
+  const cleanEmail = String(email).trim().toLowerCase();
+
+  db.get('SELECT * FROM users WHERE email = ?', [cleanEmail], async (err, user) => {
     if (err) {
       return res.status(500).json({ error: 'Database error.' });
     }
@@ -185,67 +231,116 @@ app.get('/api/products/:id', (req, res) => {
    ORDER PROCESSING ROUTES
    ========================================================= */
 
-// 1. Create / Process New Order
+// 1. Create / Process New Order (Tamper-Proof Server-Side Price Calculation)
 app.post('/api/orders', optionalAuth, (req, res) => {
-  const { customer_name, customer_email, shipping_address, payment_method, items, total_amount } = req.body;
+  const { customer_name, customer_email, shipping_address, payment_method, items } = req.body;
 
-  if (!customer_name || !customer_email || !shipping_address || !items || !items.length || !total_amount) {
-    return res.status(400).json({ error: 'Please provide all required checkout details.' });
+  if (!customer_name || !customer_email || !shipping_address || !items || !Array.isArray(items) || items.length === 0) {
+    return res.status(400).json({ error: 'Please provide all required checkout details with valid items.' });
   }
 
-  const userId = req.user ? req.user.id : null;
-  const itemsJson = JSON.stringify(items);
-  const payment = payment_method || 'Credit/Debit Card';
+  // Validate item format
+  const validProductIds = items.map(i => parseInt(i.id)).filter(id => !isNaN(id) && id > 0);
+  if (validProductIds.length !== items.length) {
+    return res.status(400).json({ error: 'Invalid product item format in cart.' });
+  }
 
-  const sql = `
-    INSERT INTO orders (user_id, customer_name, customer_email, shipping_address, payment_method, items, total_amount, status)
-    VALUES (?, ?, ?, ?, ?, ?, ?, 'Processing')
-  `;
-
-  db.run(sql, [userId, customer_name, customer_email, shipping_address, payment, itemsJson, total_amount], function (err) {
-    if (err) {
-      console.error('Order creation error:', err);
-      return res.status(500).json({ error: 'Failed to process order.' });
+  // Query actual product prices from database to calculate guaranteed accurate total
+  const placeholders = validProductIds.map(() => '?').join(',');
+  db.all(`SELECT id, name, price, stock FROM products WHERE id IN (${placeholders})`, validProductIds, (pErr, dbProducts) => {
+    if (pErr || !dbProducts || dbProducts.length === 0) {
+      return res.status(500).json({ error: 'Failed to verify product prices against catalog.' });
     }
 
-    const orderId = this.lastID;
+    const catalogMap = new Map(dbProducts.map(p => [p.id, p]));
+    let verifiedTotal = 0;
+    const verifiedItems = [];
 
-    // Deduct stock for ordered items
-    items.forEach((item) => {
-      if (item.id && item.quantity) {
-        db.run('UPDATE products SET stock = MAX(0, stock - ?) WHERE id = ?', [item.quantity, item.id]);
+    for (const item of items) {
+      const dbProd = catalogMap.get(parseInt(item.id));
+      if (!dbProd) {
+        return res.status(400).json({ error: `Product ID #${item.id} not found in store catalog.` });
       }
-    });
 
-    res.status(201).json({
-      message: 'Order placed successfully!',
-      orderId: orderId,
-      orderDetails: {
-        id: orderId,
-        customer_name,
-        customer_email,
-        shipping_address,
-        payment_method: payment,
-        total_amount,
-        status: 'Processing',
-        items
+      const qty = Math.max(1, parseInt(item.quantity) || 1);
+      verifiedTotal += dbProd.price * qty;
+
+      verifiedItems.push({
+        id: dbProd.id,
+        name: dbProd.name,
+        price: dbProd.price, // Server verified price!
+        quantity: qty
+      });
+    }
+
+    const finalCalculatedTotal = Math.round(verifiedTotal * 100) / 100;
+    const userId = req.user ? req.user.id : null;
+    const itemsJson = JSON.stringify(verifiedItems);
+    const payment = payment_method || 'Credit/Debit Card';
+
+    const sql = `
+      INSERT INTO orders (user_id, customer_name, customer_email, shipping_address, payment_method, items, total_amount, status)
+      VALUES (?, ?, ?, ?, ?, ?, ?, 'Processing')
+    `;
+
+    db.run(
+      sql,
+      [userId, String(customer_name).trim(), String(customer_email).toLowerCase().trim(), String(shipping_address).trim(), payment, itemsJson, finalCalculatedTotal],
+      function (err) {
+        if (err) {
+          console.error('Order creation error:', err);
+          return res.status(500).json({ error: 'Failed to process order.' });
+        }
+
+        const orderId = this.lastID;
+
+        // Deduct stock for ordered items
+        verifiedItems.forEach((item) => {
+          db.run('UPDATE products SET stock = MAX(0, stock - ?) WHERE id = ?', [item.quantity, item.id]);
+        });
+
+        res.status(201).json({
+          message: 'Order placed successfully!',
+          orderId: orderId,
+          orderDetails: {
+            id: orderId,
+            customer_name: String(customer_name).trim(),
+            customer_email: String(customer_email).toLowerCase().trim(),
+            shipping_address: String(shipping_address).trim(),
+            payment_method: payment,
+            total_amount: finalCalculatedTotal,
+            status: 'Processing',
+            items: verifiedItems
+          }
+        });
       }
-    });
+    );
   });
 });
 
-// 2. Get Single Order by ID (for confirmation page)
-app.get('/api/orders/:id', (req, res) => {
+// 2. Get Single Order by ID (with privacy masking for non-owners)
+app.get('/api/orders/:id', optionalAuth, (req, res) => {
   const orderId = req.params.id;
   db.get('SELECT * FROM orders WHERE id = ?', [orderId], (err, order) => {
     if (err || !order) {
       return res.status(404).json({ error: 'Order not found.' });
     }
+
     try {
       order.items = JSON.parse(order.items);
     } catch (e) {
       order.items = [];
     }
+
+    // Check if requester owns this order
+    const isOwner = req.user && order.user_id && req.user.id === order.user_id;
+
+    if (!isOwner && order.user_id) {
+      // Mask personal information for privacy
+      order.customer_email = order.customer_email.replace(/^(.{2})(.*)(@.*)$/, '$1***$3');
+      order.shipping_address = 'Address hidden for privacy';
+    }
+
     res.json({ order });
   });
 });

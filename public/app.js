@@ -123,6 +123,13 @@ function updateCartBadge() {
   }
 }
 
+function escapeHtml(text) {
+  if (!text) return '';
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
 function updateNavbarAuth() {
   const authNav = document.getElementById('nav-auth');
   if (!authNav) return;
@@ -130,7 +137,7 @@ function updateNavbarAuth() {
   const user = Auth.getUser();
   if (user) {
     authNav.innerHTML = `
-      <span class="user-badge">Hi, ${user.name}</span>
+      <span class="user-badge">Hi, ${escapeHtml(user.name)}</span>
       <a href="/orders.html" class="nav-link">My Orders</a>
       <a href="javascript:void(0)" onclick="Auth.logout()" class="nav-link" style="color: var(--danger-color);">Logout</a>
     `;
