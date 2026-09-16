@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Account Sign In / Register - E-Commerce Store</title>
+  <title>Collector Access | NEO-ARTIFACTS</title>
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
@@ -13,21 +13,24 @@
   <header class="navbar">
     <div class="container nav-container">
       <a href="index.html" class="logo">
-        <i class="fa-solid fa-bag-shopping"></i> E-COMMERCE <span>STORE</span>
-        <span class="logo-tag">Full Stack</span>
+        <div class="logo-icon-wrap">
+          <i class="fa-solid fa-atom"></i>
+        </div>
+        NEO-<span>ARTIFACTS</span>
+        <span class="logo-badge">Curated '26</span>
       </a>
 
       <nav>
         <ul class="nav-menu">
-          <li><a href="index.html" class="nav-link"><i class="fa-solid fa-house"></i> Home</a></li>
+          <li><a href="index.html" class="nav-link"><i class="fa-solid fa-compass"></i> Catalog</a></li>
           <li>
             <a href="cart.html" class="nav-link cart-icon-wrapper">
-              <i class="fa-solid fa-cart-shopping"></i> Cart
+              <i class="fa-solid fa-bag-shopping"></i> Cart
               <span id="cart-count" class="cart-badge" style="display: none;">0</span>
             </a>
           </li>
-          <li id="nav-auth" class="nav-menu" style="gap: 16px;">
-            <a href="login.html" class="nav-link active"><i class="fa-solid fa-user"></i> Sign In</a>
+          <li id="nav-auth" class="nav-menu" style="gap: 12px;">
+            <a href="login.html" class="nav-link active"><i class="fa-solid fa-arrow-right-to-bracket"></i> Sign In</a>
           </li>
         </ul>
       </nav>
@@ -50,37 +53,56 @@
         
         <!-- Login Form -->
         <form id="login-form" onsubmit="handleLogin(event)">
-          <h2 style="font-size: 1.4rem; margin-bottom: 20px; text-align: center;">Welcome Back</h2>
+          <h2 style="font-size: 1.4rem; color: #fff; margin-bottom: 8px; text-align: center;">Welcome Back</h2>
+          <p style="color: var(--text-muted); font-size: 0.88rem; text-align: center; margin-bottom: 24px;">Sign in to manage your acquired pieces and orders.</p>
+
           <div class="form-group">
             <label for="login-email">Email Address</label>
-            <input type="email" id="login-email" class="form-control" placeholder="your@email.com" required>
+            <input type="email" id="login-email" class="form-control" placeholder="collector@domain.com" required>
           </div>
           <div class="form-group">
-            <label for="login-password">Password</label>
+            <label for="login-password">Security Password</label>
             <input type="password" id="login-password" class="form-control" placeholder="••••••••" required>
           </div>
-          <button type="submit" id="login-btn" class="btn btn-primary btn-block" style="padding: 12px; margin-top: 10px;">
-            Sign In
+
+          <button type="submit" id="btn-login-submit" class="btn btn-primary btn-block" style="padding: 12px; font-size: 0.95rem; margin-top: 10px;">
+            <i class="fa-solid fa-arrow-right-to-bracket"></i> Access Account
           </button>
+
+          <!-- 1-Click Demo Fill -->
+          <div class="demo-credentials-box">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span><strong>Demo Collector Account</strong></span>
+              <button type="button" onclick="fillDemoCredentials()" class="btn btn-outline btn-sm" style="font-size: 0.72rem; padding: 3px 8px;">
+                <i class="fa-solid fa-wand-magic-sparkles"></i> Auto Fill
+              </button>
+            </div>
+            <div style="margin-top: 6px; font-family: var(--font-mono); font-size: 0.78rem;">
+              alice@example.com / AlicePassword123!
+            </div>
+          </div>
         </form>
 
         <!-- Register Form -->
         <form id="register-form" onsubmit="handleRegister(event)" style="display: none;">
-          <h2 style="font-size: 1.4rem; margin-bottom: 20px; text-align: center;">Create New Account</h2>
+          <h2 style="font-size: 1.4rem; color: #fff; margin-bottom: 8px; text-align: center;">Create Collector Account</h2>
+          <p style="color: var(--text-muted); font-size: 0.88rem; text-align: center; margin-bottom: 24px;">Join the private registry for limited drops and custom telemetry.</p>
+
           <div class="form-group">
             <label for="reg-name">Full Name</label>
-            <input type="text" id="reg-name" class="form-control" placeholder="John Doe" required>
+            <input type="text" id="reg-name" class="form-control" placeholder="e.g. Maya Lin" required>
           </div>
           <div class="form-group">
             <label for="reg-email">Email Address</label>
-            <input type="email" id="reg-email" class="form-control" placeholder="your@email.com" required>
+            <input type="email" id="reg-email" class="form-control" placeholder="maya@domain.com" required>
           </div>
           <div class="form-group">
-            <label for="reg-password">Password</label>
-            <input type="password" id="reg-password" class="form-control" placeholder="At least 6 characters" minlength="6" required>
+            <label for="reg-password">Password (min 6 chars)</label>
+            <input type="password" id="reg-password" class="form-control" placeholder="••••••••" minlength="6" required>
           </div>
-          <button type="submit" id="reg-btn" class="btn btn-primary btn-block" style="padding: 12px; margin-top: 10px;">
-            Create Account
+
+          <button type="submit" id="btn-reg-submit" class="btn btn-primary btn-block" style="padding: 12px; font-size: 0.95rem; margin-top: 10px;">
+            <i class="fa-solid fa-user-plus"></i> Complete Registration
           </button>
         </form>
 
@@ -91,24 +113,19 @@
   <!-- Footer -->
   <footer>
     <div class="container">
-      <p>&copy; 2026 CodeAlpha Full Stack Internship — Task 1: Simple E-Commerce Store</p>
+      <p>&copy; 2026 <strong>NEO-ARTIFACTS</strong> &bull; CodeAlpha Full Stack Development &bull; Curated E-Commerce Experience</p>
     </div>
   </footer>
 
   <script src="app.js"></script>
   <script>
-    // If already logged in, redirect to home
-    if (Auth.isLoggedIn()) {
-      window.location.href = 'index.html';
-    }
-
-    function switchTab(tab) {
+    function switchTab(mode) {
       const loginForm = document.getElementById('login-form');
       const regForm = document.getElementById('register-form');
       const tabLogin = document.getElementById('tab-login');
       const tabReg = document.getElementById('tab-register');
 
-      if (tab === 'login') {
+      if (mode === 'login') {
         loginForm.style.display = 'block';
         regForm.style.display = 'none';
         tabLogin.classList.add('active');
@@ -121,58 +138,72 @@
       }
     }
 
-    async function handleLogin(event) {
-      event.preventDefault();
+    function fillDemoCredentials() {
+      document.getElementById('login-email').value = 'alice@example.com';
+      document.getElementById('login-password').value = 'AlicePassword123!';
+      showToast('Demo collector credentials loaded!');
+    }
+
+    async function handleLogin(e) {
+      e.preventDefault();
       const email = document.getElementById('login-email').value.trim();
       const password = document.getElementById('login-password').value;
-      const btn = document.getElementById('login-btn');
+      const btn = document.getElementById('btn-login-submit');
 
       btn.disabled = true;
-      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Signing In...';
+      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Authenticating...';
 
       try {
-        const res = await apiRequest('/login', {
+        const data = await apiRequest('/login', {
           method: 'POST',
           body: JSON.stringify({ email, password })
         });
 
-        Auth.setUser(res.token, res.user);
-        showToast('Login successful!');
+        Auth.setUser(data.token, data.user);
+        showToast('Authenticated! Welcome back, ' + data.user.name);
         setTimeout(() => {
           window.location.href = 'index.html';
-        }, 600);
+        }, 800);
       } catch (err) {
-        alert(`Login failed: ${err.message}`);
+        showToast(err.message || 'Login failed');
         btn.disabled = false;
-        btn.innerHTML = 'Sign In';
+        btn.innerHTML = '<i class="fa-solid fa-arrow-right-to-bracket"></i> Access Account';
       }
     }
 
-    async function handleRegister(event) {
-      event.preventDefault();
+    async function handleRegister(e) {
+      e.preventDefault();
       const name = document.getElementById('reg-name').value.trim();
       const email = document.getElementById('reg-email').value.trim();
       const password = document.getElementById('reg-password').value;
-      const btn = document.getElementById('reg-btn');
+      const btn = document.getElementById('btn-reg-submit');
 
       btn.disabled = true;
-      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Creating Account...';
+      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Registering...';
 
       try {
-        const res = await apiRequest('/register', {
+        const data = await apiRequest('/register', {
           method: 'POST',
           body: JSON.stringify({ name, email, password })
         });
 
-        Auth.setUser(res.token, res.user);
-        showToast('Registration successful! Welcome.');
+        Auth.setUser(data.token, data.user);
+        showToast('Registration complete! Welcome, ' + data.user.name);
         setTimeout(() => {
           window.location.href = 'index.html';
-        }, 600);
+        }, 800);
       } catch (err) {
-        alert(`Registration failed: ${err.message}`);
+        showToast(err.message || 'Registration failed');
         btn.disabled = false;
-        btn.innerHTML = 'Create Account';
+        btn.innerHTML = '<i class="fa-solid fa-user-plus"></i> Complete Registration';
+      }
+    }
+
+    // Auto-redirect if already logged in
+    if (Auth.isLoggedIn()) {
+      const user = Auth.getUser();
+      if (user) {
+        window.location.href = 'index.html';
       }
     }
   </script>

@@ -187,9 +187,9 @@ app.get('/api/me', authenticateToken, (req, res) => {
    PRODUCT ROUTES
    ========================================================= */
 
-// 1. Get All Products (with optional category & search filtering)
+// 1. Get All Products (with optional category & search filtering and sorting)
 app.get('/api/products', (req, res) => {
-  const { category, search } = req.query;
+  const { category, search, sort } = req.query;
   let query = 'SELECT * FROM products WHERE 1=1';
   const params = [];
 
@@ -203,7 +203,15 @@ app.get('/api/products', (req, res) => {
     params.push(`%${search}%`, `%${search}%`);
   }
 
-  query += ' ORDER BY id ASC';
+  if (sort === 'price_asc') {
+    query += ' ORDER BY price ASC';
+  } else if (sort === 'price_desc') {
+    query += ' ORDER BY price DESC';
+  } else if (sort === 'name') {
+    query += ' ORDER BY name ASC';
+  } else {
+    query += ' ORDER BY id ASC';
+  }
 
   db.all(query, params, (err, rows) => {
     if (err) {

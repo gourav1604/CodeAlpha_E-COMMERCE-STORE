@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Shopping Cart & Checkout - E-Commerce Store</title>
+  <title>Acquisition Bag & Checkout | NEO-ARTIFACTS</title>
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
@@ -13,21 +13,24 @@
   <header class="navbar">
     <div class="container nav-container">
       <a href="index.html" class="logo">
-        <i class="fa-solid fa-bag-shopping"></i> E-COMMERCE <span>STORE</span>
-        <span class="logo-tag">Full Stack</span>
+        <div class="logo-icon-wrap">
+          <i class="fa-solid fa-atom"></i>
+        </div>
+        NEO-<span>ARTIFACTS</span>
+        <span class="logo-badge">Curated '26</span>
       </a>
 
       <nav>
         <ul class="nav-menu">
-          <li><a href="index.html" class="nav-link"><i class="fa-solid fa-house"></i> Home</a></li>
+          <li><a href="index.html" class="nav-link"><i class="fa-solid fa-compass"></i> Catalog</a></li>
           <li>
             <a href="cart.html" class="nav-link cart-icon-wrapper active">
-              <i class="fa-solid fa-cart-shopping"></i> Cart
+              <i class="fa-solid fa-bag-shopping"></i> Cart
               <span id="cart-count" class="cart-badge" style="display: none;">0</span>
             </a>
           </li>
-          <li id="nav-auth" class="nav-menu" style="gap: 16px;">
-            <a href="login.html" class="nav-link"><i class="fa-solid fa-user"></i> Sign In</a>
+          <li id="nav-auth" class="nav-menu" style="gap: 12px;">
+            <a href="login.html" class="nav-link"><i class="fa-solid fa-arrow-right-to-bracket"></i> Sign In</a>
           </li>
         </ul>
       </nav>
@@ -35,10 +38,10 @@
   </header>
 
   <!-- Cart & Checkout Container -->
-  <main class="container" style="margin-top: 32px; margin-bottom: 50px;">
-    <h1 style="font-size: 1.8rem; font-weight: 700; margin-bottom: 24px;">
-      <i class="fa-solid fa-cart-shopping"></i> Shopping Cart & Checkout
-    </h1>
+  <main class="container" style="margin-top: 36px; margin-bottom: 60px;">
+    <div class="section-header">
+      <h2><i class="fa-solid fa-bag-shopping"></i> Acquisition <span>Bag & Checkout</span></h2>
+    </div>
 
     <div id="cart-view">
       <!-- Injected via JavaScript -->
@@ -48,7 +51,7 @@
   <!-- Footer -->
   <footer>
     <div class="container">
-      <p>&copy; 2026 CodeAlpha Full Stack Internship — Task 1: Simple E-Commerce Store</p>
+      <p>&copy; 2026 <strong>NEO-ARTIFACTS</strong> &bull; CodeAlpha Full Stack Development &bull; Curated E-Commerce Experience</p>
     </div>
   </footer>
 
@@ -61,12 +64,12 @@
 
       if (items.length === 0) {
         cartView.innerHTML = `
-          <div class="empty-state" style="background: white; border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 50px 20px;">
-            <i class="fa-solid fa-cart-arrow-down empty-state-icon"></i>
-            <h2>Your cart is currently empty</h2>
-            <p>Browse our products and add items to your shopping cart.</p>
-            <a href="index.html" class="btn btn-primary" style="margin-top: 20px;">
-              <i class="fa-solid fa-arrow-left"></i> Start Shopping
+          <div class="empty-state" style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); padding: 60px 24px; box-shadow: var(--shadow-card);">
+            <i class="fa-solid fa-box-open empty-state-icon" style="color: var(--cyan-primary);"></i>
+            <h2>Your Acquisition Bag is Empty</h2>
+            <p>You have not selected any rare design pieces from our exhibition yet.</p>
+            <a href="index.html" class="btn btn-primary" style="margin-top: 24px;">
+              <i class="fa-solid fa-compass"></i> Explore Exhibition
             </a>
           </div>
         `;
@@ -74,7 +77,7 @@
       }
 
       const subtotal = Cart.getTotal();
-      const shipping = 0.00; // Free shipping
+      const shipping = 0.00; // Free white-glove express courier
       const total = subtotal + shipping;
 
       cartView.innerHTML = `
@@ -82,11 +85,13 @@
           
           <!-- Items List Card -->
           <div class="cart-card">
-            <h3 style="margin-bottom: 20px; font-size: 1.25rem;">Items in Your Cart (${Cart.getCount()})</h3>
+            <h3 style="margin-bottom: 20px; font-size: 1.2rem; color: #fff; display: flex; align-items: center; gap: 8px;">
+              <i class="fa-solid fa-list-check" style="color: var(--cyan-primary);"></i> Selected Pieces (${Cart.getCount()})
+            </h3>
             <table class="cart-table">
               <thead>
                 <tr>
-                  <th>Product</th>
+                  <th>Artifact</th>
                   <th>Quantity</th>
                   <th>Subtotal</th>
                   <th>Action</th>
@@ -97,7 +102,7 @@
                   <tr>
                     <td>
                       <div class="cart-item-info">
-                        <img src="${item.image_url}" alt="${item.name}" class="cart-item-img" onerror="this.src='https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=600'">
+                        <img src="${item.image_url}" alt="${item.name}" class="cart-item-img" onerror="this.src='https://images.unsplash.com/photo-1545454675-3531b543be5d?w=800'">
                         <div>
                           <a href="product.html?id=${item.id}" class="cart-item-title">${item.name}</a>
                           <div class="cart-item-price">${formatCurrency(item.price)} each</div>
@@ -105,18 +110,18 @@
                       </div>
                     </td>
                     <td>
-                      <div style="display: flex; align-items: center; gap: 6px;">
-                        <button class="qty-btn" style="width: 28px; height: 28px;" onclick="updateCartQty(${item.id}, ${item.quantity - 1})">-</button>
-                        <span style="font-weight: 600; min-width: 24px; text-align: center;">${item.quantity}</span>
-                        <button class="qty-btn" style="width: 28px; height: 28px;" onclick="updateCartQty(${item.id}, ${item.quantity + 1})">+</button>
+                      <div style="display: flex; align-items: center; gap: 8px;">
+                        <button class="qty-btn" style="width: 30px; height: 30px;" onclick="updateCartQty(${item.id}, ${item.quantity - 1})">-</button>
+                        <span style="font-weight: 700; font-family: var(--font-mono); min-width: 24px; text-align: center;">${item.quantity}</span>
+                        <button class="qty-btn" style="width: 30px; height: 30px;" onclick="updateCartQty(${item.id}, ${item.quantity + 1})">+</button>
                       </div>
                     </td>
-                    <td style="font-weight: 700; color: var(--primary-color);">
+                    <td style="font-weight: 700; font-family: var(--font-mono); color: #38bdf8;">
                       ${formatCurrency(item.price * item.quantity)}
                     </td>
                     <td>
-                      <button onclick="removeCartItem(${item.id})" class="btn btn-danger btn-sm" title="Remove item">
-                        <i class="fa-solid fa-trash"></i>
+                      <button onclick="removeCartItem(${item.id})" class="btn btn-danger btn-sm" title="Remove piece">
+                        <i class="fa-solid fa-trash-can"></i>
                       </button>
                     </td>
                   </tr>
@@ -124,65 +129,71 @@
               </tbody>
             </table>
 
-            <div style="margin-top: 20px; display: flex; justify-content: space-between; align-items: center;">
+            <div style="margin-top: 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
               <a href="index.html" class="btn btn-outline btn-sm">
-                <i class="fa-solid fa-arrow-left"></i> Continue Shopping
+                <i class="fa-solid fa-arrow-left"></i> Return to Exhibition
               </a>
-              <button onclick="handleClearCart()" class="btn btn-outline btn-sm" style="color: var(--danger-color);">
-                Clear Cart
+              <button onclick="handleClearCart()" class="btn btn-outline btn-sm" style="color: var(--rose-danger); border-color: rgba(244, 63, 94, 0.3);">
+                <i class="fa-solid fa-trash"></i> Empty Bag
               </button>
             </div>
           </div>
 
           <!-- Order Summary & Checkout Form -->
           <div class="cart-card">
-            <h3 style="margin-bottom: 20px; font-size: 1.25rem;">Order Processing</h3>
+            <h3 style="margin-bottom: 20px; font-size: 1.2rem; color: #fff; display: flex; align-items: center; gap: 8px;">
+              <i class="fa-solid fa-receipt" style="color: var(--cyan-primary);"></i> Acquisition Summary
+            </h3>
 
             <div class="order-summary">
               <div class="summary-row">
-                <span>Subtotal</span>
-                <span>${formatCurrency(subtotal)}</span>
+                <span>Vault Items Subtotal</span>
+                <span style="font-family: var(--font-mono);">${formatCurrency(subtotal)}</span>
               </div>
               <div class="summary-row">
-                <span>Shipping</span>
-                <span style="color: var(--success-color); font-weight: 600;">FREE</span>
+                <span>Secured Express Courier</span>
+                <span style="color: var(--emerald-success); font-weight: 600; font-family: var(--font-mono);">COMPLIMENTARY</span>
+              </div>
+              <div class="summary-row">
+                <span>Studio Certification & Insurance</span>
+                <span style="color: var(--emerald-success); font-weight: 600; font-family: var(--font-mono);">INCLUDED</span>
               </div>
               <div class="summary-row total">
-                <span>Total Amount</span>
+                <span>Total Due</span>
                 <span>${formatCurrency(total)}</span>
               </div>
             </div>
 
-            <hr style="margin: 20px 0; border: none; border-top: 1px solid var(--border-color);">
+            <hr style="margin: 20px 0; border: none; border-top: 1px solid var(--border-subtle);">
 
-            <h4 style="margin-bottom: 14px; font-size: 1.05rem;"><i class="fa-solid fa-truck"></i> Shipping & Payment</h4>
+            <h4 style="margin-bottom: 16px; font-size: 1rem; color: #fff;"><i class="fa-solid fa-truck-fast"></i> Delivery & Dispatch Details</h4>
             <form id="checkout-form" onsubmit="handlePlaceOrder(event)">
               <div class="form-group">
                 <label for="cust-name">Full Name *</label>
-                <input type="text" id="cust-name" class="form-control" placeholder="John Doe" required value="${user ? user.name : ''}">
+                <input type="text" id="cust-name" class="form-control" placeholder="e.g. Alex Mercer" required value="${user ? user.name : ''}">
               </div>
 
               <div class="form-group">
                 <label for="cust-email">Email Address *</label>
-                <input type="email" id="cust-email" class="form-control" placeholder="john@example.com" required value="${user ? user.email : ''}">
+                <input type="email" id="cust-email" class="form-control" placeholder="alex@domain.com" required value="${user ? user.email : ''}">
               </div>
 
               <div class="form-group">
-                <label for="cust-address">Delivery Address *</label>
-                <textarea id="cust-address" class="form-control" rows="3" placeholder="Street address, City, State, ZIP code" required></textarea>
+                <label for="cust-address">Delivery Destination *</label>
+                <textarea id="cust-address" class="form-control" rows="3" placeholder="Suite, Street Address, City, State, Postal PIN Code" required></textarea>
               </div>
 
               <div class="form-group">
                 <label for="cust-payment">Payment Method *</label>
                 <select id="cust-payment" class="form-control" required>
-                  <option value="Credit / Debit Card">Credit / Debit Card</option>
-                  <option value="Cash on Delivery">Cash on Delivery (COD)</option>
-                  <option value="UPI / Net Banking">UPI / Net Banking</option>
+                  <option value="Credit / Debit Card">Direct Card Settlement (Encrypted)</option>
+                  <option value="UPI / Net Banking">UPI / Instant Digital Banking</option>
+                  <option value="Cash on Delivery">Secured Courier Delivery Settlement (COD)</option>
                 </select>
               </div>
 
-              <button type="submit" id="submit-order-btn" class="btn btn-primary btn-block" style="padding: 14px; font-size: 1rem; margin-top: 10px;">
-                <i class="fa-solid fa-lock"></i> Place Order (${formatCurrency(total)})
+              <button type="submit" id="submit-order-btn" class="btn btn-primary btn-block" style="padding: 14px; font-size: 1rem; margin-top: 12px;">
+                <i class="fa-solid fa-lock"></i> Authorize Acquisition (${formatCurrency(total)})
               </button>
             </form>
           </div>
@@ -206,7 +217,7 @@
     }
 
     function handleClearCart() {
-      if (confirm('Are you sure you want to clear your cart?')) {
+      if (confirm('Are you sure you want to clear your acquisition bag?')) {
         Cart.clear();
         renderCart();
       }
@@ -215,10 +226,10 @@
     async function handlePlaceOrder(event) {
       event.preventDefault();
       const submitBtn = document.getElementById('submit-order-btn');
-      
       const items = Cart.getItems();
+
       if (items.length === 0) {
-        showToast('Your cart is empty.');
+        showToast('Your bag is empty.');
         return;
       }
 
@@ -226,10 +237,9 @@
       const customer_email = document.getElementById('cust-email').value.trim();
       const shipping_address = document.getElementById('cust-address').value.trim();
       const payment_method = document.getElementById('cust-payment').value;
-      const total_amount = Cart.getTotal();
 
       submitBtn.disabled = true;
-      submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Processing Order...';
+      submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Processing Authorization...';
 
       try {
         const orderData = {
@@ -237,8 +247,13 @@
           customer_email,
           shipping_address,
           payment_method,
-          items,
-          total_amount
+          items: items.map(i => ({
+            id: i.id,
+            name: i.name,
+            price: i.price,
+            quantity: i.quantity
+          })),
+          total_amount: Cart.getTotal()
         };
 
         const result = await apiRequest('/orders', {
@@ -246,20 +261,20 @@
           body: JSON.stringify(orderData)
         });
 
-        // Clear cart
         Cart.clear();
+        showToast('Acquisition Authorized! Redirecting...');
+        setTimeout(() => {
+          window.location.href = 'orders.html?orderId=' + result.orderId;
+        }, 800);
 
-        // Redirect to order confirmation receipt
-        window.location.href = `orders.html?orderId=${result.orderId}`;
       } catch (err) {
-        console.error('Order processing failed:', err);
-        alert(`Error placing order: ${err.message}`);
+        console.error('Order error:', err);
+        showToast(err.message || 'Failed to place order');
         submitBtn.disabled = false;
-        submitBtn.innerHTML = '<i class="fa-solid fa-lock"></i> Place Order';
+        submitBtn.innerHTML = '<i class="fa-solid fa-lock"></i> Retry Authorization';
       }
     }
 
-    // Initial render
     renderCart();
   </script>
 </body>

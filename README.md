@@ -1,26 +1,40 @@
-# CodeAlpha_ECommerceStore
+# CodeAlpha_ECommerceStore — NEO-ARTIFACTS
 
-### Full Stack Web Development Internship — Task 1: Simple E-Commerce Store
+### Full Stack Web Development Internship — Task 1: Curated E-Commerce Store
 
-An end-to-end full-stack e-commerce web application built strictly in accordance with the **CodeAlpha Internship** task requirements.
+An end-to-end full-stack e-commerce web application built strictly in accordance with the **CodeAlpha Internship** task requirements, featuring **NEO-ARTIFACTS**: an avant-garde design boutique featuring 10 completely unique, bespoke design artifacts and speculative technology items in an Obsidian Luxe dark aesthetic.
 
 ---
 
-## 📌 Project Overview & Features
+## 📌 Project Overview & Unique Features
 
 This project implements a complete, responsive e-commerce web platform containing:
 
-1. **Product Listings**:
-   - Dynamic catalog displaying products with images, categories, descriptions, prices, and stock statuses.
-   - Real-time search by keywords and instant category filtering (Electronics, Fashion, Accessories, Home & Living).
+1. **Curated Avant-Garde Product Catalog (100% Unique Design Objects)**:
+   - Zero generic or copied tutorial items. Replaces cliché headphones, mugs, and sneakers with 10 rare, bespoke design pieces:
+     * *Levitating Ferrofluid Acoustic Sound Sculptor* (Cyber-Acoustics)
+     * *IN-14 Dual-Core Cyberpunk Nixie Desk Clock* (Retro-Futurism)
+     * *Damascus Forged Modular Split Mechanical Deck* (Studio Tech)
+     * *Bioluminescent Dinoflagellate Living Algae Sphere* (Bio-Living)
+     * *Obsidian Titanium Bio-Sensory Smart Ring Gen-4* (Wearable Tech)
+     * *Cast Architectural Concrete & Brass Ultrasonic Diffuser* (Artisanal Living)
+     * *Self-Balancing Gyroscopic Aerograde Titanium Stylus* (Design Artifacts)
+     * *Sailcloth X-Pac Solar Modular Crossbody Sling* (Tactical Gear)
+     * *Anti-Gravity Magnetic Floating Geode Planter* (Bio-Living)
+     * *Dichroic Hypercube Infinite Optical Prism* (Ambient Art)
+   - Real-time instant search, category filter chips, and price/alphabetical sorting.
 
-2. **Product Details Page**:
-   - Dedicated page (`product.html?id=...`) showing complete specifications, high-resolution imagery, real-time stock availability, and a quantity selector.
-   - "Add to Cart" and "Buy Now" direct actions.
+2. **Obsidian Luxe Dark Aesthetic**:
+   - Modern glassmorphic dark interface (`#070A11` obsidian slate, glowing electric cyan `#06B6D4`, and neon violet `#8B5CF6`).
+   - Clean typography with Google Fonts Inter and JetBrains Mono.
 
-3. **Shopping Cart**:
-   - Persistent client-side cart allowing users to view items, modify quantities, remove products, and compute live subtotals and grand totals.
-   - Dynamic cart counter badge in navigation header.
+3. **Product Details View**:
+   - Dedicated view (`product.html?id=...`) featuring high-resolution imagery, craftsmanship specs sheet, live inventory vault stock countdown, and quantity controls.
+   - "Acquire / Add to Bag" and instant checkout actions.
+
+4. **Shopping Cart & Checkout**:
+   - Persistent client-side cart allowing users to modify quantities, delete items, view live subtotals, and authorize acquisitions.
+   - Dynamic cart counter badge in navigation header with pulse glow.
 
 4. **Order Processing**:
    - Comprehensive checkout system capturing customer details, shipping address, and payment method selection (Credit/Debit Card, Cash on Delivery, UPI).

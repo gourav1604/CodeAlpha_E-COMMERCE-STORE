@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Orders - E-Commerce Store</title>
+  <title>Acquisition Invoices & Tracking | NEO-ARTIFACTS</title>
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
@@ -13,33 +13,36 @@
   <header class="navbar">
     <div class="container nav-container">
       <a href="index.html" class="logo">
-        <i class="fa-solid fa-bag-shopping"></i> E-COMMERCE <span>STORE</span>
-        <span class="logo-tag">Full Stack</span>
+        <div class="logo-icon-wrap">
+          <i class="fa-solid fa-atom"></i>
+        </div>
+        NEO-<span>ARTIFACTS</span>
+        <span class="logo-badge">Curated '26</span>
       </a>
 
       <nav>
         <ul class="nav-menu">
-          <li><a href="index.html" class="nav-link"><i class="fa-solid fa-house"></i> Home</a></li>
+          <li><a href="index.html" class="nav-link"><i class="fa-solid fa-compass"></i> Catalog</a></li>
           <li>
             <a href="cart.html" class="nav-link cart-icon-wrapper">
-              <i class="fa-solid fa-cart-shopping"></i> Cart
+              <i class="fa-solid fa-bag-shopping"></i> Cart
               <span id="cart-count" class="cart-badge" style="display: none;">0</span>
             </a>
           </li>
-          <li id="nav-auth" class="nav-menu" style="gap: 16px;">
-            <a href="login.html" class="nav-link"><i class="fa-solid fa-user"></i> Sign In</a>
+          <li id="nav-auth" class="nav-menu" style="gap: 12px;">
+            <a href="login.html" class="nav-link"><i class="fa-solid fa-arrow-right-to-bracket"></i> Sign In</a>
           </li>
         </ul>
       </nav>
     </div>
   </header>
 
-  <!-- Orders Content Area -->
-  <main class="container" style="margin-top: 36px; margin-bottom: 50px;">
+  <!-- Content Container -->
+  <main class="container" style="margin-top: 36px; margin-bottom: 60px;">
     <div id="orders-content">
       <div class="empty-state">
-        <i class="fa-solid fa-spinner fa-spin empty-state-icon"></i>
-        <p>Loading order details...</p>
+        <i class="fa-solid fa-spinner fa-spin empty-state-icon" style="color: var(--cyan-primary);"></i>
+        <p>Loading acquisition records...</p>
       </div>
     </div>
   </main>
@@ -47,7 +50,7 @@
   <!-- Footer -->
   <footer>
     <div class="container">
-      <p>&copy; 2026 CodeAlpha Full Stack Internship — Task 1: Simple E-Commerce Store</p>
+      <p>&copy; 2026 <strong>NEO-ARTIFACTS</strong> &bull; CodeAlpha Full Stack Development &bull; Curated E-Commerce Experience</p>
     </div>
   </footer>
 
@@ -58,176 +61,205 @@
       const urlParams = new URLSearchParams(window.location.search);
       const orderId = urlParams.get('orderId');
 
-      // Case 1: Display Specific Order Confirmation / Invoice
+      // Case 1: Specific Order Confirmation / Invoice
       if (orderId) {
         try {
-          const data = await apiRequest(`/orders/${orderId}`);
+          const data = await apiRequest('/orders/' + orderId);
           const order = data.order;
 
           container.innerHTML = `
             <div class="order-success-card">
-              <div class="success-icon">
+              <div class="success-icon-wrap">
                 <i class="fa-solid fa-check"></i>
               </div>
-              <h1 style="font-size: 1.8rem; font-weight: 800; color: var(--text-dark); margin-bottom: 8px;">Order Confirmed!</h1>
-              <p style="color: var(--text-muted); margin-bottom: 24px;">
-                Thank you for your purchase. We have received your order and are processing it.
+              <h1 style="font-size: 1.8rem; font-weight: 800; color: #fff; margin-bottom: 8px;">
+                Acquisition Confirmed & Logged
+              </h1>
+              <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 24px;">
+                Order Reference: <strong style="color: var(--cyan-primary); font-family: var(--font-mono);">#NEO-${order.id}</strong>
               </p>
 
-              <div class="order-receipt">
-                <div style="display: flex; justify-content: space-between; margin-bottom: 12px; font-weight: 700; border-bottom: 1px solid var(--border-color); padding-bottom: 8px;">
-                  <span>Order Reference: #${order.id}</span>
-                  <span style="color: var(--primary-color);">${order.status}</span>
+              <!-- Visual 4-Stage Progress Timeline -->
+              <div class="order-timeline">
+                <div class="timeline-step completed">
+                  <div class="step-node"><i class="fa-solid fa-check"></i></div>
+                  <span class="step-label">Order Logged</span>
                 </div>
-
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; font-size: 0.9rem;">
-                  <div>
-                    <strong>Customer:</strong><br>
-                    ${order.customer_name}<br>
-                    <span style="color: var(--text-muted);">${order.customer_email}</span>
-                  </div>
-                  <div>
-                    <strong>Delivery Address:</strong><br>
-                    <span style="color: var(--text-muted);">${order.shipping_address}</span>
-                  </div>
-                  <div>
-                    <strong>Payment Method:</strong><br>
-                    <span style="color: var(--text-muted);">${order.payment_method}</span>
-                  </div>
-                  <div>
-                    <strong>Placed On:</strong><br>
-                    <span style="color: var(--text-muted);">${new Date(order.created_at).toLocaleString()}</span>
-                  </div>
+                <div class="timeline-step active">
+                  <div class="step-node"><i class="fa-solid fa-microscope"></i></div>
+                  <span class="step-label">Studio QC</span>
                 </div>
-
-                <h4 style="margin: 16px 0 8px; font-size: 0.95rem; border-top: 1px solid var(--border-color); padding-top: 12px;">Items Ordered:</h4>
-                <ul style="list-style: none; margin-bottom: 16px;">
-                  ${order.items.map(item => `
-                    <li style="display: flex; justify-content: space-between; padding: 6px 0; font-size: 0.9rem; border-bottom: 1px dashed var(--border-color);">
-                      <span>${item.name} × <strong>${item.quantity}</strong></span>
-                      <span>${formatCurrency(item.price * item.quantity)}</span>
-                    </li>
-                  `).join('')}
-                </ul>
-
-                <div style="display: flex; justify-content: space-between; font-size: 1.15rem; font-weight: 800; color: var(--text-dark); margin-top: 12px;">
-                  <span>Total Paid:</span>
-                  <span style="color: var(--primary-color);">${formatCurrency(order.total_amount)}</span>
+                <div class="timeline-step">
+                  <div class="step-node"><i class="fa-solid fa-box"></i></div>
+                  <span class="step-label">Sealed</span>
+                </div>
+                <div class="timeline-step">
+                  <div class="step-node"><i class="fa-solid fa-plane"></i></div>
+                  <span class="step-label">Dispatched</span>
                 </div>
               </div>
 
-              <div style="display: flex; gap: 14px; justify-content: center; margin-top: 24px;">
+              <!-- Order Summary Breakdown -->
+              <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 24px; text-align: left; margin-bottom: 28px;">
+                <h3 style="font-size: 1.1rem; color: #fff; margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
+                  <i class="fa-solid fa-receipt" style="color: var(--cyan-primary);"></i> Acquired Items
+                </h3>
+                
+                <table style="width: 100%; border-collapse: collapse; margin-bottom: 18px;">
+                  <thead>
+                    <tr style="border-bottom: 1px solid var(--border-subtle); color: var(--text-muted); font-size: 0.8rem; font-family: var(--font-mono); text-transform: uppercase;">
+                      <th style="padding: 8px 0; text-align: left;">Artifact</th>
+                      <th style="padding: 8px 0; text-align: center;">Qty</th>
+                      <th style="padding: 8px 0; text-align: right;">Amount</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    ${order.items.map(item => `
+                      <tr style="border-bottom: 1px solid rgba(255, 255, 255, 0.04); font-size: 0.92rem;">
+                        <td style="padding: 12px 0; color: #fff; font-weight: 500;">${escapeHtml(item.name)}</td>
+                        <td style="padding: 12px 0; text-align: center; color: var(--text-muted); font-family: var(--font-mono);">${item.quantity}</td>
+                        <td style="padding: 12px 0; text-align: right; color: #38bdf8; font-family: var(--font-mono); font-weight: 600;">${formatCurrency(item.price * item.quantity)}</td>
+                      </tr>
+                    `).join('')}
+                  </tbody>
+                </table>
+
+                <div style="display: flex; justify-content: space-between; font-size: 1.15rem; font-weight: 700; color: #fff; padding-top: 12px; border-top: 1px solid var(--border-subtle);">
+                  <span>Verified Grand Total:</span>
+                  <span style="color: #38bdf8; font-family: var(--font-mono);">${formatCurrency(order.total_amount)}</span>
+                </div>
+              </div>
+
+              <!-- Dispatch Meta Information -->
+              <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 20px; text-align: left; margin-bottom: 28px; font-size: 0.88rem;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+                  <div>
+                    <span style="color: var(--text-muted); display: block; font-size: 0.75rem; text-transform: uppercase; font-family: var(--font-mono);">Recipient</span>
+                    <strong style="color: #fff;">${escapeHtml(order.customer_name)}</strong>
+                  </div>
+                  <div>
+                    <span style="color: var(--text-muted); display: block; font-size: 0.75rem; text-transform: uppercase; font-family: var(--font-mono);">Contact Email</span>
+                    <span style="color: #fff;">${escapeHtml(order.customer_email)}</span>
+                  </div>
+                  <div>
+                    <span style="color: var(--text-muted); display: block; font-size: 0.75rem; text-transform: uppercase; font-family: var(--font-mono);">Delivery Destination</span>
+                    <span style="color: #fff;">${escapeHtml(order.shipping_address)}</span>
+                  </div>
+                  <div>
+                    <span style="color: var(--text-muted); display: block; font-size: 0.75rem; text-transform: uppercase; font-family: var(--font-mono);">Payment Method</span>
+                    <span style="color: #fff;">${escapeHtml(order.payment_method)}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div style="display: flex; gap: 14px; justify-content: center; flex-wrap: wrap;">
                 <a href="index.html" class="btn btn-primary">
-                  <i class="fa-solid fa-bag-shopping"></i> Continue Shopping
+                  <i class="fa-solid fa-compass"></i> Continue Exhibition
                 </a>
-                ${Auth.isLoggedIn() ? `
-                  <a href="orders.html" class="btn btn-secondary">
-                    <i class="fa-solid fa-list"></i> View All My Orders
-                  </a>
-                ` : ''}
+                <button onclick="window.print()" class="btn btn-secondary">
+                  <i class="fa-solid fa-print"></i> Print Authenticity Invoice
+                </button>
               </div>
             </div>
           `;
         } catch (err) {
           container.innerHTML = `
             <div class="empty-state">
-              <i class="fa-solid fa-triangle-exclamation empty-state-icon" style="color: var(--danger-color);"></i>
-              <h3>Order Not Found</h3>
+              <i class="fa-solid fa-triangle-exclamation empty-state-icon" style="color: var(--rose-danger);"></i>
+              <h3>Acquisition Record Not Found</h3>
               <p>${err.message}</p>
-              <a href="index.html" class="btn btn-primary" style="margin-top: 16px;">Go to Store</a>
+              <a href="index.html" class="btn btn-primary" style="margin-top: 16px;">Return to Exhibition</a>
             </div>
           `;
         }
         return;
       }
 
-      // Case 2: Display User Order History
-      if (!Auth.isLoggedIn()) {
-        container.innerHTML = `
-          <div class="empty-state" style="background: white; border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 50px 20px;">
-            <i class="fa-solid fa-lock empty-state-icon"></i>
-            <h2>Sign in to view your orders</h2>
-            <p>Please log in to your account to view your past order history.</p>
-            <a href="login.html" class="btn btn-primary" style="margin-top: 16px;">Sign In / Register</a>
-          </div>
-        `;
-        return;
-      }
+      // Case 2: Logged-in User Order History
+      if (Auth.isLoggedIn()) {
+        try {
+          const data = await apiRequest('/my-orders');
+          const orders = data.orders || [];
 
-      try {
-        const data = await apiRequest('/my-orders');
-        const orders = data.orders || [];
+          if (orders.length === 0) {
+            container.innerHTML = `
+              <div class="empty-state" style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); padding: 60px 24px; box-shadow: var(--shadow-card);">
+                <i class="fa-solid fa-box-archive empty-state-icon" style="color: var(--cyan-primary);"></i>
+                <h2>No Past Acquisitions Found</h2>
+                <p>You have not placed any orders yet. Visit our exhibition to acquire limited design pieces.</p>
+                <a href="index.html" class="btn btn-primary" style="margin-top: 20px;">
+                  <i class="fa-solid fa-compass"></i> Explore Catalog
+                </a>
+              </div>
+            `;
+            return;
+          }
 
-        if (orders.length === 0) {
           container.innerHTML = `
-            <div class="empty-state" style="background: white; border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 50px 20px;">
-              <i class="fa-solid fa-box-open empty-state-icon"></i>
-              <h2>No Past Orders Found</h2>
-              <p>You haven't placed any orders yet.</p>
-              <a href="index.html" class="btn btn-primary" style="margin-top: 16px;">Start Shopping</a>
+            <div class="section-header">
+              <h2><i class="fa-solid fa-clock-rotate-left"></i> Acquisition <span>History</span></h2>
+              <span class="count-pill">${orders.length} Order(s) Logged</span>
             </div>
-          `;
-          return;
-        }
 
-        container.innerHTML = `
-          <h1 style="font-size: 1.8rem; font-weight: 700; margin-bottom: 24px;">
-            <i class="fa-solid fa-clock-rotate-left"></i> My Order History (${orders.length})
-          </h1>
-          <div style="display: flex; flex-direction: column; gap: 20px;">
-            ${orders.map(order => `
-              <div class="cart-card">
-                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 12px; margin-bottom: 14px;">
-                  <div>
-                    <span style="font-weight: 700; font-size: 1.1rem;">Order #${order.id}</span>
-                    <span style="color: var(--text-muted); font-size: 0.85rem; margin-left: 12px;">
-                      ${new Date(order.created_at).toLocaleDateString()} at ${new Date(order.created_at).toLocaleTimeString()}
+            <div style="display: flex; flex-direction: column; gap: 20px;">
+              ${orders.map(o => `
+                <div class="cart-card" style="padding: 24px;">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 10px;">
+                    <div>
+                      <strong style="color: #fff; font-size: 1.1rem;">Order Reference #NEO-${o.id}</strong>
+                      <span style="color: var(--text-muted); font-size: 0.85rem; margin-left: 12px; font-family: var(--font-mono);">
+                        ${new Date(o.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
+                      </span>
+                    </div>
+                    <span class="stock-badge" style="font-size: 0.82rem; background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); padding: 4px 10px; border-radius: var(--radius-full);">
+                      <i class="fa-solid fa-circle-dot"></i> ${o.status}
                     </span>
                   </div>
-                  <span class="stock-badge" style="background: #e0f2fe; color: #0284c7; padding: 4px 10px; border-radius: 20px; font-weight: 600;">
-                    ${order.status}
-                  </span>
-                </div>
 
-                <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 20px;">
-                  <div>
-                    <h5 style="margin-bottom: 8px; color: var(--text-muted);">Items:</h5>
-                    <ul style="list-style: none;">
-                      ${order.items.map(it => `
-                        <li style="font-size: 0.95rem; margin-bottom: 4px;">
-                          • ${it.name} (Qty: ${it.quantity}) — <strong>${formatCurrency(it.price * it.quantity)}</strong>
-                        </li>
-                      `).join('')}
-                    </ul>
+                  <div style="color: var(--text-muted); font-size: 0.92rem; margin-bottom: 16px;">
+                    ${o.items.map(i => `<span>${escapeHtml(i.name)} (${i.quantity}x)</span>`).join(', ')}
                   </div>
-                  <div style="text-align: right; display: flex; flex-direction: column; justify-content: space-between;">
+
+                  <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 14px; border-top: 1px solid var(--border-subtle); flex-wrap: wrap; gap: 10px;">
                     <div>
-                      <span style="color: var(--text-muted); font-size: 0.9rem;">Total Paid:</span>
-                      <div style="font-size: 1.3rem; font-weight: 800; color: var(--primary-color);">
-                        ${formatCurrency(order.total_amount)}
-                      </div>
+                      <span style="color: var(--text-muted); font-size: 0.85rem;">Total Settlement:</span>
+                      <span style="font-family: var(--font-mono); font-weight: 700; color: #38bdf8; margin-left: 8px; font-size: 1.05rem;">
+                        ${formatCurrency(o.total_amount)}
+                      </span>
                     </div>
-                    <div>
-                      <a href="orders.html?orderId=${order.id}" class="btn btn-outline btn-sm">
-                        <i class="fa-solid fa-receipt"></i> View Invoice
-                      </a>
-                    </div>
+                    <a href="orders.html?orderId=${o.id}" class="btn btn-secondary btn-sm">
+                      <i class="fa-solid fa-eye"></i> View Certificate / Invoice
+                    </a>
                   </div>
                 </div>
-              </div>
-            `).join('')}
-          </div>
-        `;
+              `).join('')}
+            </div>
+          `;
 
-      } catch (err) {
-        container.innerHTML = `
-          <div class="empty-state">
-            <i class="fa-solid fa-triangle-exclamation empty-state-icon" style="color: var(--danger-color);"></i>
-            <h3>Failed to load orders</h3>
-            <p>${err.message}</p>
-          </div>
-        `;
+        } catch (err) {
+          container.innerHTML = `
+            <div class="empty-state">
+              <i class="fa-solid fa-triangle-exclamation empty-state-icon" style="color: var(--rose-danger);"></i>
+              <h3>Failed to Retrieve Order History</h3>
+              <p>${err.message}</p>
+            </div>
+          `;
+        }
+        return;
       }
+
+      // Case 3: Guest without orderId
+      container.innerHTML = `
+        <div class="empty-state" style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); padding: 60px 24px; box-shadow: var(--shadow-card);">
+          <i class="fa-solid fa-user-lock empty-state-icon" style="color: var(--cyan-primary);"></i>
+          <h2>Sign In to View Acquisition History</h2>
+          <p>Sign in to your registered collector account to view past orders, track dispatch status, and download certificates of authenticity.</p>
+          <div style="display: flex; gap: 14px; justify-content: center; margin-top: 24px;">
+            <a href="login.html" class="btn btn-primary"><i class="fa-solid fa-arrow-right-to-bracket"></i> Sign In</a>
+            <a href="index.html" class="btn btn-secondary"><i class="fa-solid fa-compass"></i> Explore Catalog</a>
+          </div>
+        </div>
+      `;
     }
 
     loadOrdersView();

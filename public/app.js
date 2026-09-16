@@ -137,13 +137,13 @@ function updateNavbarAuth() {
   const user = Auth.getUser();
   if (user) {
     authNav.innerHTML = `
-      <span class="user-badge">Hi, ${escapeHtml(user.name)}</span>
-      <a href="/orders.html" class="nav-link">My Orders</a>
-      <a href="javascript:void(0)" onclick="Auth.logout()" class="nav-link" style="color: var(--danger-color);">Logout</a>
+      <span class="user-badge"><i class="fa-solid fa-user-astronaut"></i> ${escapeHtml(user.name)}</span>
+      <a href="orders.html" class="nav-link"><i class="fa-solid fa-clock-rotate-left"></i> Acquisitions</a>
+      <a href="javascript:void(0)" onclick="Auth.logout()" class="nav-link" style="color: var(--rose-danger);"><i class="fa-solid fa-arrow-right-from-bracket"></i> Logout</a>
     `;
   } else {
     authNav.innerHTML = `
-      <a href="/login.html" class="nav-link">Sign In / Register</a>
+      <a href="login.html" class="nav-link"><i class="fa-solid fa-arrow-right-to-bracket"></i> Sign In / Register</a>
     `;
   }
 }

@@ -53,88 +53,109 @@ db.serialize(() => {
     )
   `);
 
-  // Seed Products if table is empty
-  db.get("SELECT COUNT(*) AS count FROM products", (err, row) => {
+  // Seed Products if table is empty or update to unique curated catalog
+  const uniqueProducts = [
+    {
+      name: "Levitating Ferrofluid Acoustic Sound Sculptor",
+      description: "High-fidelity Bluetooth speaker featuring suspended black magnetic ferrofluid that dynamically dances and pulses to real-time sonic waveforms. Crafted with anodized space-grey aluminum and touch acoustics.",
+      price: 7499.00,
+      category: "Cyber-Acoustics",
+      image_url: "https://images.unsplash.com/photo-1545454675-3531b543be5d?w=800&auto=format&fit=crop&q=80",
+      stock: 14
+    },
+    {
+      name: "IN-14 Dual-Core Cyberpunk Nixie Desk Clock",
+      description: "Authentic cold-cathode neon vacuum tubes preserved from vintage stock, mounted inside CNC-machined titanium chassis with solid walnut accents, ambient RGB cathode backlighting, and precision quartz timing.",
+      price: 12999.00,
+      category: "Retro-Futurism",
+      image_url: "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=800&auto=format&fit=crop&q=80",
+      stock: 8
+    },
+    {
+      name: "Damascus Forged Modular Split Mechanical Deck",
+      description: "Ergonomic ortholinear split mechanical keyboard with genuine folded Damascus steel top-plate, hot-swappable tactile linear switches, dual rotary precision encoders, and braided magnetic interconnect.",
+      price: 9850.00,
+      category: "Studio Tech",
+      image_url: "https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=800&auto=format&fit=crop&q=80",
+      stock: 12
+    },
+    {
+      name: "Bioluminescent Dinoflagellate Living Algae Sphere",
+      description: "Hand-blown borosilicate glass sphere containing living Pyrocystis dinoflagellates. Absorbs daylight to produce an enchanting natural neon cyan glow when gently swirled in darkness. Requires zero maintenance.",
+      price: 3899.00,
+      category: "Bio-Living",
+      image_url: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=800&auto=format&fit=crop&q=80",
+      stock: 20
+    },
+    {
+      name: "Obsidian Titanium Bio-Sensory Smart Ring Gen-4",
+      description: "Ultra-slim 2.4mm aerograde titanium ring embedded with photoplethysmography (PPG), galvanic skin response, skin temperature sensors, and silent haptic alarms. 7-day battery life on wireless dock.",
+      price: 8499.00,
+      category: "Wearable Tech",
+      image_url: "https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=800&auto=format&fit=crop&q=80",
+      stock: 16
+    },
+    {
+      name: "Cast Architectural Concrete & Brass Ultrasonic Diffuser",
+      description: "Sculptural brutalist aroma diffuser hand-cast in high-density aggregate stone with solid brushed brass dials. Whisper-quiet ultrasonic nebulizer atomizes essential botanicals with ambient warm glow.",
+      price: 4299.00,
+      category: "Artisanal Living",
+      image_url: "https://images.unsplash.com/photo-1602928321679-560bb453f190?w=800&auto=format&fit=crop&q=80",
+      stock: 15
+    },
+    {
+      name: "Self-Balancing Gyroscopic Aerograde Titanium Stylus",
+      description: "Zero-friction perpetual balance writing instrument engineered from Grade-5 titanium and tungsten carbide. Counterweighted base allows the stylus to spin and balance effortlessly on any flat desk surface.",
+      price: 2199.00,
+      category: "Design Artifacts",
+      image_url: "https://images.unsplash.com/photo-1583485088034-697b5bc54ccd?w=800&auto=format&fit=crop&q=80",
+      stock: 25
+    },
+    {
+      name: "Sailcloth X-Pac Solar Modular Crossbody Sling",
+      description: "Weatherproof tactical sling constructed from multi-ply composite sailcloth and Cordura 500D. Features integrated thin-film flexible solar harvester panel, FIDLOCK magnetic buckles, and modular dividers.",
+      price: 5499.00,
+      category: "Tactical Gear",
+      image_url: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=800&auto=format&fit=crop&q=80",
+      stock: 10
+    },
+    {
+      name: "Anti-Gravity Magnetic Floating Geode Planter",
+      description: "Mag-lev botanical display featuring a faceted polygon geode pot floating effortlessly 20mm above an oak base, smoothly rotating 360-degrees for optimal 3D light exposure for miniature succulents.",
+      price: 3299.00,
+      category: "Bio-Living",
+      image_url: "https://images.unsplash.com/photo-1485955900006-10f4d324d411?w=800&auto=format&fit=crop&q=80",
+      stock: 18
+    },
+    {
+      name: "Dichroic Hypercube Infinite Optical Prism",
+      description: "Bespoke optical glass sculpture utilizing multi-layer dielectric optical coatings. Creates an infinite geometric internal refraction landscape that shifts vibrant colors with ambient room angles and lighting.",
+      price: 4899.00,
+      category: "Ambient Art",
+      image_url: "https://images.unsplash.com/photo-1550684848-fac1c5b4e853?w=800&auto=format&fit=crop&q=80",
+      stock: 11
+    }
+  ];
+
+  db.get("SELECT COUNT(*) AS count, name FROM products LIMIT 1", (err, row) => {
     if (err) {
       console.error("Error checking products count:", err);
       return;
     }
 
-    if (row.count === 0) {
-      console.log("Seeding sample products...");
-      const sampleProducts = [
-        {
-          name: "Wireless Noise-Canceling Headphones",
-          description: "Premium over-ear headphones with active noise cancellation, 30-hour battery life, and crystal-clear high fidelity sound.",
-          price: 2499.00,
-          category: "Electronics",
-          image_url: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=600&auto=format&fit=crop&q=80",
-          stock: 25
-        },
-        {
-          name: "Minimalist Smart Watch",
-          description: "Sleek touchscreen smartwatch with heart-rate monitoring, step tracking, GPS navigation, and water resistance up to 50 meters.",
-          price: 3999.00,
-          category: "Electronics",
-          image_url: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&auto=format&fit=crop&q=80",
-          stock: 18
-        },
-        {
-          name: "Classic Leather Backpack",
-          description: "Handcrafted genuine leather backpack with a padded laptop compartment (up to 15.6 inch), spacious interior, and durable brass zippers.",
-          price: 1899.00,
-          category: "Fashion",
-          image_url: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=600&auto=format&fit=crop&q=80",
-          stock: 12
-        },
-        {
-          name: "Ergonomic Mechanical Keyboard",
-          description: "RGB backlit mechanical keyboard with tactile blue switches, detachable braided USB-C cable, and aircraft-grade aluminum frame.",
-          price: 1499.00,
-          category: "Electronics",
-          image_url: "https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=600&auto=format&fit=crop&q=80",
-          stock: 30
-        },
-        {
-          name: "Stainless Steel Insulated Bottle",
-          description: "Double-walled vacuum insulated water bottle that keeps drinks ice cold for 24 hours or piping hot for 12 hours. BPA-free.",
-          price: 499.00,
-          category: "Accessories",
-          image_url: "https://images.unsplash.com/photo-1602143407151-7111542de6e8?w=600&auto=format&fit=crop&q=80",
-          stock: 40
-        },
-        {
-          name: "Polarized Retro Sunglasses",
-          description: "Timeless UV400 protective polarized sunglasses with lightweight acetate frame and glare-reduction coating.",
-          price: 799.00,
-          category: "Fashion",
-          image_url: "https://images.unsplash.com/photo-1511499767150-a48a237f0083?w=600&auto=format&fit=crop&q=80",
-          stock: 22
-        },
-        {
-          name: "Modern Ceramic Coffee Mug Set",
-          description: "Set of 4 matte-finish ceramic mugs crafted for everyday coffee, tea, and espresso lovers. Microwave and dishwasher safe.",
-          price: 599.00,
-          category: "Home",
-          image_url: "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=600&auto=format&fit=crop&q=80",
-          stock: 15
-        },
-        {
-          name: "Ultra-Light Running Shoes",
-          description: "Breathable athletic sneakers with responsive cushioning soles designed for maximum comfort and speed during workouts.",
-          price: 2199.00,
-          category: "Fashion",
-          image_url: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600&auto=format&fit=crop&q=80",
-          stock: 16
-        }
-      ];
+    // Check if empty or still has generic headphones
+    const needsReseed = !row || row.count === 0 || (row.name && row.name.includes("Wireless Noise-Canceling Headphones"));
 
-      const stmt = db.prepare("INSERT INTO products (name, description, price, image_url, category, stock) VALUES (?, ?, ?, ?, ?, ?)");
-      sampleProducts.forEach(p => {
-        stmt.run(p.name, p.description, p.price, p.image_url, p.category, p.stock);
+    if (needsReseed) {
+      console.log("Seeding unique avant-garde catalog products...");
+      db.run("DELETE FROM products", () => {
+        const stmt = db.prepare("INSERT INTO products (name, description, price, image_url, category, stock) VALUES (?, ?, ?, ?, ?, ?)");
+        uniqueProducts.forEach(p => {
+          stmt.run(p.name, p.description, p.price, p.image_url, p.category, p.stock);
+        });
+        stmt.finalize();
+        console.log("Unique curated catalog successfully populated!");
       });
-      stmt.finalize();
-      console.log("Sample products successfully inserted.");
     }
   });
 });
