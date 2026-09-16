@@ -1,8 +1,8 @@
-# CodeAlpha_ECommerceStore — NEO-ARTIFACTS
+# CodeAlpha_ECommerceStore — CodeAlpha E-Commerce Platform
 
 ### Full Stack Web Development Internship — Task 1: Curated E-Commerce Store
 
-An end-to-end full-stack e-commerce web application built strictly in accordance with the **CodeAlpha Internship** task requirements, featuring **NEO-ARTIFACTS**: an avant-garde design boutique featuring 10 completely unique, bespoke design artifacts and speculative technology items in an Obsidian Luxe dark aesthetic.
+An end-to-end full-stack e-commerce web application built strictly in accordance with the **CodeAlpha Internship** task requirements, featuring a modern curated boutique featuring 10 completely unique, bespoke design artifacts and speculative technology items in an Obsidian Luxe dark aesthetic.
 
 ---
 

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Acquisition Invoices & Tracking | NEO-ARTIFACTS</title>
+  <title>Orders & Tracking | CodeAlpha E-Commerce Platform</title>
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
@@ -14,10 +14,10 @@
     <div class="container nav-container">
       <a href="index.html" class="logo">
         <div class="logo-icon-wrap">
-          <i class="fa-solid fa-atom"></i>
+          <i class="fa-solid fa-bag-shopping"></i>
         </div>
-        NEO-<span>ARTIFACTS</span>
-        <span class="logo-badge">Curated '26</span>
+        CODEALPHA <span>COMMERCE</span>
+        <span class="logo-badge">Platform</span>
       </a>
 
       <nav>
@@ -50,7 +50,7 @@
   <!-- Footer -->
   <footer>
     <div class="container">
-      <p>&copy; 2026 <strong>NEO-ARTIFACTS</strong> &bull; CodeAlpha Full Stack Development &bull; Curated E-Commerce Experience</p>
+      <p>&copy; 2026 <strong>CodeAlpha E-Commerce Platform</strong> &bull; Full Stack Internship &bull; Task 1</p>
     </div>
   </footer>
 
@@ -76,7 +76,7 @@
                 Acquisition Confirmed & Logged
               </h1>
               <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 24px;">
-                Order Reference: <strong style="color: var(--cyan-primary); font-family: var(--font-mono);">#NEO-${order.id}</strong>
+                Order Reference: <strong style="color: var(--cyan-primary); font-family: var(--font-mono);">#CA-${order.id}</strong>
               </p>
 
               <!-- Visual 4-Stage Progress Timeline -->
@@ -206,7 +206,7 @@
                 <div class="cart-card" style="padding: 24px;">
                   <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 10px;">
                     <div>
-                      <strong style="color: #fff; font-size: 1.1rem;">Order Reference #NEO-${o.id}</strong>
+                      <strong style="color: #fff; font-size: 1.1rem;">Order Reference #CA-${o.id}</strong>
                       <span style="color: var(--text-muted); font-size: 0.85rem; margin-left: 12px; font-family: var(--font-mono);">
                         ${new Date(o.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
                       </span>
